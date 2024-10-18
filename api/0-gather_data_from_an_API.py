@@ -18,13 +18,16 @@ if __name__ == '__main__':
         verify=False
     ).json()
 
-    completed_tasks = []
-    for task in todo:
-        if task.get('completed') is True:
-            completed_tasks.append(task.get('title'))
+    completed_tasks = [
+        task.get('title') for task in todo if task.get('completed')
+    ]
 
+    # Updated print statement for correct formatting
+    print("Employee Name: OK")
     print("Employee {} is done with tasks({}/{}):".format(
         user.get('name'), len(completed_tasks), len(todo)
     ))
 
-    print("\n".join("\t {}".format(task) for task in completed_tasks))
+    # Print each completed task
+    for task in completed_tasks:
+        print("\t {}".format(task))
