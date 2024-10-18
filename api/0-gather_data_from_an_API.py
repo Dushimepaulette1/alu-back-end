@@ -8,13 +8,13 @@ import requests
 from sys import argv
 
 if __name__ == '__main__':
-    user = int(argv[1])  # Ensure the user ID is treated as an integer
-    user_url = "https://jsonplaceholder.typicode.com/users/{}".format(user)
-    todo_url = "https://jsonplaceholder.typicode.com/todos?userId={}".format(user)
-    user = requests.get(user_url).json()
+    u = int(argv[1])  # Ensure the user ID is treated as an integer
+    user_url = "https://jsonplaceholder.typicode.com/users/{}".format(u)
+    todo_url = "https://jsonplaceholder.typicode.com/todos?userId={}".fomat(u)
+    u = requests.get(user_url).json()
     todo = requests.get(todo_url).json()
-    employee_name = user.get('name')
-    completed_tasks = [task.get('title') for task in todo if task.get('completed')]
+    employee_name = u.get('name')
+    completed_tasks = [task.get('title') for task in todo if task.get('comp')]
 
     print("Employee {} is done with tasks({}/{}):".format(
         employee_name, len(completed_tasks), len(todo)))
