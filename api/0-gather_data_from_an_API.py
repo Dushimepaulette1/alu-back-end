@@ -1,30 +1,57 @@
 #!/usr/bin/python3
 """
-Uses https://jsonplaceholder.typicode.com along with an employee ID to
-return information about the employee's todo list progress.
+This module fetches and displays the TODO list progress for a given employee ID
+using a REST API.
 """
-
 import requests
-from sys import argv
+import sys
 
-if __name__ == '__main__':
-    user_id = argv[1]
-    user = requests.get(
-        "https://jsonplaceholder.typicode.com/users/{}".format(user_id),
-        verify=False
-    ).json()
-    todo = requests.get(
-        "https://jsonplaceholder.typicode.com/todos?userId={}".format(user_id),
-        verify=False
-    ).json()
 
-    completed_tasks = []
-    for task in todo:
-        if task.get('completed') is True:
-            completed_tasks.append(task.get('title'))
+def get_employee_todo_progress(employee_id):
+    """
+    Fetches the TODO list progress for a given employee ID from the REST API.
 
-    print("Employee {} is done with tasks({}/{}):".format(
-        user.get('name'), len(completed_tasks), len(todo)
-    ))
+    Args:
+        employee_id (int): The ID of the employee.
 
-    print("\n".join("\t {}".format(task) for task in completed_tasks))
+    Prints:
+        The employee name, number of completed tasks, total number of tasks,
+        and the titles of the completed tasks.
+    """
+    url = "https://jsonplaceholder.typicode.com"
+
+    # Fetch employee data
+    employee_response = requests.get(f"{url}/users/{employee_id}")
+    if employee_response.status_code != 200:
+        print("Employee not found.")
+        return
+
+    employee = employee_response.json()
+    employee_name = employee.get('name')
+
+    # Fetch TODO list data for the employee
+    todo_response = requests.get(f"{url}/todos?userId={employee_id}")
+    todos = todo_response.json()
+
+    # Filter tasks
+    done_tasks = [todo for todo in todos if todo.get('completed')]
+    total_tasks = len(todos)
+    done_tasks_count = len(done_tasks)
+
+    # Print the required output
+    print(f"Employee {employee_name} is done with tasks("
+          f"{done_tasks_count}/{total_tasks}):")
+    # Print completed task titles
+    for task in done_tasks:
+        print(f"\t {task.get('title')}")
+
+
+if __name__ == "__main__":
+    if len(sys.argv) < 2:
+        print("Usage: python3 0-gather_data_from_an_API.py <employee_id>")
+    else:
+        try:
+            employee_id = int(sys.argv[1])
+            get_employee_todo_progress(employee_id)
+        except ValueError:
+            print("Employee ID must be an integer.")
